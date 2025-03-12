@@ -2,6 +2,8 @@
 
 A command line tool for managing Cline rules and modes.
 
+![main ci](https://github.com/mojibakeo/cliner/actions/workflows/ci.yml/badge.svg?branch=main)
+
 ## Overview
 
 Cliner is a utility for generating configuration files for Cline from markdown files. It manages two main components:
