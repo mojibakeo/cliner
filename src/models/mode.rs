@@ -4,30 +4,27 @@ use crate::error::Result;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Mode {
-    pub mode_name: String,
+    pub slug: String,
+    pub name: String,
+    pub role_definition: String,
     pub groups: Vec<String>,
-    pub role: String,
-    pub description: Option<String>,
-    pub restrictions: Option<Value>,
-    pub default_output: Option<String>,
+    pub custom_instructions: Option<String>,
 }
 
 impl Mode {
     pub fn new(
-        mode_name: String,
+        slug: String,
+        name: String,
+        role_definition: String,
         groups: Vec<String>,
-        role: String,
-        description: Option<String>,
-        restrictions: Option<Value>,
-        default_output: Option<String>,
+        custom_instructions: Option<String>,
     ) -> Self {
         Self {
-            mode_name,
+            slug,
+            name,
+            role_definition,
             groups,
-            role,
-            description,
-            restrictions,
-            default_output,
+            custom_instructions,
         }
     }
 
@@ -40,35 +37,31 @@ impl Mode {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use serde_json::json;
 
     #[test]
     fn test_mode_creation() {
         let mode = Mode::new(
+            "test-mode".to_string(),
             "Test Mode".to_string(),
-            vec!["read".to_string(), "write".to_string()],
             "Test Role Definition".to_string(),
-            Some("Test Description".to_string()),
-            Some(json!({"fileRegex": "\\.rs$"})),
-            Some("Default output".to_string()),
+            vec!["read".to_string(), "edit".to_string()],
+            Some("Custom instructions".to_string()),
         );
 
-        assert_eq!(mode.mode_name, "Test Mode");
-        assert_eq!(mode.groups, vec!["read", "write"]);
-        assert_eq!(mode.role, "Test Role Definition");
-        assert_eq!(mode.description, Some("Test Description".to_string()));
-        assert!(mode.restrictions.is_some());
-        assert_eq!(mode.default_output, Some("Default output".to_string()));
+        assert_eq!(mode.slug, "test-mode");
+        assert_eq!(mode.name, "Test Mode");
+        assert_eq!(mode.role_definition, "Test Role Definition");
+        assert_eq!(mode.groups, vec!["read", "edit"]);
+        assert_eq!(mode.custom_instructions, Some("Custom instructions".to_string()));
     }
 
     #[test]
     fn test_to_json() {
         let mode = Mode::new(
+            "test-mode".to_string(),
             "Test Mode".to_string(),
-            vec!["read".to_string()],
             "Test Role".to_string(),
-            None,
-            None,
+            vec!["read".to_string()],
             None,
         );
 
@@ -76,8 +69,9 @@ mod tests {
         assert!(json_result.is_ok());
 
         let json_value = json_result.unwrap();
-        assert_eq!(json_value["mode_name"], "Test Mode");
+        assert_eq!(json_value["slug"], "test-mode");
+        assert_eq!(json_value["name"], "Test Mode");
         assert_eq!(json_value["groups"][0], "read");
-        assert_eq!(json_value["role"], "Test Role");
+        assert_eq!(json_value["role_definition"], "Test Role");
     }
 }

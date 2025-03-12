@@ -34,7 +34,6 @@ impl ClinerGenerator {
         OutputGenerator::write_json_if_not_empty(modes_json_values, ".roomodes", "Generated .roomodes")
     }
     
-    
     pub fn generate_clinerules(&self) -> Result<()> {
         if !self.paths.rules_exists() {
             println!("rules directory not found, skipping .clinerules generation");
@@ -46,8 +45,7 @@ impl ClinerGenerator {
         OutputGenerator::write_content_if_not_empty(concatenated_rules, ".clinerules", "Generated .clinerules")
     }
     
-    
-    pub fn run(&self) -> Result<()> {
+    pub fn run_generate(&self) -> Result<()> {
         self.validate_cline_exists()?;
         
         let (roomodes_result, clinerules_result) = rayon::join(
@@ -79,7 +77,7 @@ mod tests {
         create_dir_all(&modes_dir)?;
         create_dir_all(&rules_dir)?;
 
-        let mode_content = "mode_name: TestMode\ngroups:\n- read\n- write\n\n---\n\n# Test Role Definition\n\nThis is test.";
+        let mode_content = "mode_name: TestMode\ngroups:\n- read\n- edit\n\n---\n\n# Test Role Definition\n\nThis is test.";
         let mode_file_path = modes_dir.join("test_mode.md");
         let mut mode_file = File::create(&mode_file_path)?;
         write!(mode_file, "{}", mode_content)?;
@@ -108,7 +106,6 @@ mod tests {
     struct TestClinerGenerator {
         paths: ClinePaths,
     }
-    
     impl TestClinerGenerator {
         fn new(base_dir: &Path) -> Self {
             let base = base_dir.join(".cline");
@@ -217,7 +214,7 @@ mod tests {
     }
 
     #[test]
-    fn test_run() {
+    fn test_run_generate() {
         let temp_dir = TempDir::new().unwrap();
         let (_modes_dir, _rules_dir) = create_test_cline_directory(&temp_dir).unwrap();
         

@@ -4,8 +4,8 @@ mod processors;
 mod generators;
 
 use error::Result;
-use generators::ClinerGenerator;
+use generators::ClinerRunner;
 
 fn main() -> Result<()> {
-   ClinerGenerator::new().run()
+   ClinerRunner::run()
 }

@@ -11,7 +11,11 @@ impl OutputGenerator {
             return Ok(());
         }
         
-        let formatted_json = serde_json::to_string_pretty(&json_values)?;
+        let custom_modes_obj = serde_json::json!({
+            "customModes": json_values
+        });
+        
+        let formatted_json = serde_json::to_string_pretty(&custom_modes_obj)?;
         fs::write(output_path, formatted_json)?;
         println!("{}", success_message);
         Ok(())
@@ -57,6 +61,7 @@ mod tests {
         let mut contents = String::new();
         file.read_to_string(&mut contents).unwrap();
         
+        assert!(contents.contains("\"customModes\""));
         assert!(contents.contains("\"name\": \"Test1\""));
         assert!(contents.contains("\"value\": 123"));
         assert!(contents.contains("\"name\": \"Test2\""));
